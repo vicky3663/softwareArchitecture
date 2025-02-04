@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  apisix:
+    image: apache/apisix:latest
+    ports:
+      - "9080:9080"
+      - "9443:9443"
+    networks:
+      - gateway-network
+
+  knative:
+    image: gcr.io/knative-releases/knative-serving:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - gateway-network
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+    command: server /data
+    environment:
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+    volumes:
+      - minio_data:/data
+    networks:
+      - gateway-network
+
+volumes:
+  minio_data:
+
+networks:
+  gateway-network:
